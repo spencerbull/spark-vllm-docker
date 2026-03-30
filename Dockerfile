@@ -14,6 +14,8 @@ ENV MAX_JOBS=${BUILD_JOBS}
 ENV CMAKE_BUILD_PARALLEL_LEVEL=${BUILD_JOBS}
 ENV NINJAFLAGS="-j${BUILD_JOBS}"
 ENV MAKEFLAGS="-j${BUILD_JOBS}"
+ENV DG_JIT_USE_NVRTC=1
+ENV USE_CUDNN=1
 
 # Set non-interactive frontend to prevent apt prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -119,6 +121,16 @@ RUN if [ -n "$FLASHINFER_PRS" ]; then \
             curl -fL "https://github.com/flashinfer-ai/flashinfer/pull/${pr}.diff" | git apply -v; \
         done; \
     fi
+
+# TEMPORARY patch for NVFP4 crash (PR 2913)
+RUN curl -fsL https://github.com/flashinfer-ai/flashinfer/pull/38423.diff -o pr2913.diff \
+    && if git apply --reverse --check pr2913.diff 2>/dev/null; then \
+         echo "PR #2913 already applied, skipping."; \
+       else \
+         echo "Applying FI PR #2913..."; \
+         git apply -v pr2913.diff; \
+       fi \
+    && rm pr2913.diff
 
 # Apply patch to avoid re-downloading existing cubins
 COPY flashinfer_cache.patch .
@@ -247,6 +259,8 @@ ENV MAX_JOBS=${BUILD_JOBS}
 ENV CMAKE_BUILD_PARALLEL_LEVEL=${BUILD_JOBS}
 ENV NINJAFLAGS="-j${BUILD_JOBS}"
 ENV MAKEFLAGS="-j${BUILD_JOBS}"
+ENV DG_JIT_USE_NVRTC=1
+ENV USE_CUDNN=1
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_BREAK_SYSTEM_PACKAGES=1

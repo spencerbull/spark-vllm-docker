@@ -69,7 +69,7 @@ An initial build speed depends on your Internet connection speed and whether the
 
 **On a single node**:
 
-**NEW** - `launch-cluster.sh` now supports solo mode, which is now a recommended way to run the container on a single Spark:
+`launch-cluster.sh` supports solo mode, which is now a recommended way to run the container on a single Spark:
 
 ```bash
 ./launch-cluster.sh --solo exec \
@@ -78,23 +78,6 @@ An initial build speed depends on your Internet connection speed and whether the
     --port 8000 --host 0.0.0.0 \
     --gpu-memory-utilization 0.7 \
     --load-format fastsafetensors
-```
-
-**To launch using regular `docker run`**
-
-```bash
- docker run \
-  --privileged \
-  --gpus all \
-  -it --rm \
-  --network host --ipc=host \
-  -v  ~/.cache/huggingface:/root/.cache/huggingface \
-  vllm-node \
-  bash -c -i "vllm serve \
-  QuantTrio/Qwen3-VL-30B-A3B-Instruct-AWQ \
-  --port 8000 --host 0.0.0.0 \
-  --gpu-memory-utilization 0.7 \
-  --load-format fastsafetensors"
 ```
 
 **On a cluster**
@@ -151,7 +134,7 @@ For periodic maintenance, I recommend using a filter: `docker builder prune --fi
 
 ## CHANGELOG
 
-### 2026-03-29
+### 2026-03-30
 
 #### Flags to specify Flashinfer ref and apply PRs
 
@@ -161,8 +144,6 @@ For periodic maintenance, I recommend using a filter: `docker builder prune --fi
 - `--apply-flashinfer-pr <pr-num>` — fetch and apply a FlashInfer GitHub PR patch before building. Can be specified multiple times. Forces a local FlashInfer build.
 
 Both flags are incompatible with `--exp-mxfp4`.
-
-### 2026-03-27
 
 #### Default image tag in `build-and-copy.sh`
 
