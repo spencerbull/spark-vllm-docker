@@ -149,8 +149,8 @@ def load_recipe(recipe_path: Path) -> dict[str, Any]:
         # Try candidates in order: add extension to original path first,
         # then fall back to flat recipes/ directory (for bare recipe names)
         candidates = [
-            recipe_path.with_suffix(".yaml"),
-            recipe_path.with_suffix(".yml"),
+            Path(str(recipe_path) + ".yaml"),
+            Path(str(recipe_path) + ".yml"),
             RECIPES_DIR / recipe_path.name,
             RECIPES_DIR / f"{recipe_path.name}.yaml",
             RECIPES_DIR / f"{recipe_path.name}.yml",
