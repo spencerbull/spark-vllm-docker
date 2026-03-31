@@ -368,7 +368,7 @@ if [[ -n "$LAUNCH_SCRIPT_PATH" ]]; then
     LAUNCH_SCRIPT_MODE="true"
 
     # If launch script is specified, default action to exec unless explicitly set to stop/status
-    if [[ "$ACTION" == "start" ]]; then
+    if [[ -z "$ACTION" || "$ACTION" == "start" ]]; then
         ACTION="exec"
     fi
 fi
