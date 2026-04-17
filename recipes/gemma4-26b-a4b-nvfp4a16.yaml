@@ -1,0 +1,51 @@
+# Recipe: Gemma4-26B-A4B-it-NVFP4A16
+# bg-digitalservices Gemma4 NVFP4A16 quantization for DGX Spark
+# Single-node only for now: current multi-node NVFP4 MoE backends fail on GB10.
+
+recipe_version: "1"
+name: Gemma4-26B-A4B-it-NVFP4A16
+description: vLLM serving bg-digitalservices Gemma4-26B-A4B-it-NVFP4A16 on a single GB10
+
+model: bg-digitalservices/Gemma-4-26B-A4B-it-NVFP4A16
+
+cluster_only: false
+solo_only: true
+
+container: vllm-node-tf5
+
+build_args:
+  - --tf5
+
+mods:
+  - mods/fix-gemma4-nvfp4
+
+defaults:
+  port: 8000
+  host: 0.0.0.0
+  tensor_parallel: 1
+  gpu_memory_utilization: 0.7
+  max_model_len: 262144
+  max_num_batched_tokens: 8192
+  max_num_seqs: 4
+
+env:
+  VLLM_NVFP4_GEMM_BACKEND: marlin
+
+command: |
+  vllm serve bg-digitalservices/Gemma-4-26B-A4B-it-NVFP4A16 \
+    --served-model-name gemma-4-26b-a4b-it-nvfp4a16 \
+    --max-model-len {max_model_len} \
+    --gpu-memory-utilization {gpu_memory_utilization} \
+    --port {port} \
+    --host {host} \
+    --load-format fastsafetensors \
+    --enable-prefix-caching \
+    --trust-remote-code \
+    --quantization modelopt \
+    --dtype auto \
+    --kv-cache-dtype fp8 \
+    --moe-backend marlin \
+    --max-num-batched-tokens {max_num_batched_tokens} \
+    --max-num-seqs {max_num_seqs} \
+    -tp {tensor_parallel} \
+    --distributed-executor-backend ray
