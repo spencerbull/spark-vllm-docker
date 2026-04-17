@@ -11,6 +11,9 @@ vllm serve bg-digitalservices/Gemma-4-26B-A4B-it-NVFP4A16 \
     --load-format fastsafetensors \
     --enable-prefix-caching \
     --trust-remote-code \
+    --enable-auto-tool-choice \
+    --tool-call-parser gemma4 \
+    --reasoning-parser gemma4 \
     --quantization modelopt \
     --dtype auto \
     --kv-cache-dtype fp8 \
